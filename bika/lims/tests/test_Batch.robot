@@ -39,14 +39,17 @@ Test batch inherited ARs
     Click Link                          Add
     Wait until page contains            Add Batch
     Input Text                          title                   First Batch
-    select from dropdown                Client                  Happy
+    # ar context:
+    Page should not contain element     Client
     Input Text                          description             contains ARs.
     Click Button                        Save
 
     go to                               ${PLONEURL}/batches/B-001/analysisrequests
-    select from list                    ar_count           6
+    input text                          ar_count           6
     click link                          Add new
     wait until page contains            Request new analyses
+    Select from dropdown                ar_0_Client             Happy
+    Click element                       css=.ClientCopyButton
     Select from dropdown                ar_0_Contact            Rita
     Click element                       css=.ContactCopyButton
     SelectDate                          ar_0_SamplingDate       1
@@ -65,7 +68,6 @@ Test batch inherited ARs
     Go to                               ${PLONEURL}/batches
     Click Link                          Add
     Input Text                          title           Second Batch
-    select from dropdown                Client          Happy
     Input Text                          description     Inherit, delete, rinse, repeat
     Click Button                        Save
 
@@ -116,7 +118,6 @@ Add Batch
     Click Link                   Add
     Wait until page contains     Add Batch
     Input text                   description  Just a regular batch
-    Select from dropdown         Client     Happy
     SelectDate                   BatchDate       1
     Click Button                 xpath=//input[@value="Save"]
     Wait until page contains     saved
@@ -139,9 +140,10 @@ Batch state should be
 Add AR
     Go to                        http://localhost:55001/plone/batches/B-001/analysisrequests
     Wait until page contains     Add new
-    Select from list             ar_count  1
+    input text                   ar_count  1
     click Link                   Add new
     Wait until page contains     Request new analyses
+    Select from dropdown         ar_0_Client             Happy
     Select from dropdown         ar_0_Contact            Rita
     Select from dropdown         ar_0_SampleType         Apple
     Select from dropdown         ar_0_Profile            Counts
