@@ -21,6 +21,7 @@ VERSIONABLE_TYPES = ('AnalysisService',
 
 PUBLICATION_PREFS = DisplayList((
     ('email', _('Email')),
+    ('csv', _('CSV')),
     ('pdf', _('PDF')),
 # https://github.com/bikalabs/Bika-LIMS/issues/713
 #    ('fax', _('Fax')),

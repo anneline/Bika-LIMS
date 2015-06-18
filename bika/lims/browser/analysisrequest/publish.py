@@ -30,6 +30,8 @@ import re
 import tempfile
 import urllib2
 
+import pdb
+
 class AnalysisRequestPublishView(BrowserView):
     template = ViewPageTemplateFile("templates/analysisrequest_publish.pt")
     _ars = []
@@ -668,7 +670,42 @@ class AnalysisRequestPublishView(BrowserView):
         style = self.request.form.get('style')
         uid = self.request.form.get('uid')
         reporthtml = "<html><head>%s</head><body><div id='report'>%s</body></html>" % (style, html);
+        self.csv_data = self.generateCSV()
         return self.publishFromHTML(uid, safe_unicode(reporthtml).encode('utf-8'));
+
+    def generateCSV(self):
+        # generate the CSV data 
+        import csv
+        import StringIO
+        pdb.set_trace()
+        csv_rows= []
+        fieldnames = ['id']
+        for ar_item in self._ars:
+            ar = self._ar_data(ar_item)
+            row = {} 
+            row['id'] = ar['id']
+            pocs = ar['categorized_analyses'] 
+            for poc_key in pocs.keys():
+                poc = pocs[poc_key]
+                for cat_key in poc.keys():
+                    cat = poc[cat_key]
+                    for analysis in cat:
+                        a_id = analysis['id']
+                        if a_id not in fieldnames:
+                            fieldnames.append(a_id)
+                        row[analysis['id']] = analysis['result'] 
+            csv_rows.append(row)
+
+    
+        pdb.set_trace()
+        output = StringIO.StringIO()
+        dw = csv.DictWriter(output, fieldnames=fieldnames)
+        dw.writerow(dict((fn, fn) for fn in fieldnames))
+        for row in csv_rows:
+            dw.writerow(row)
+        csv = output.getvalue()
+        return csv
+                
 
     def publishFromHTML(self, aruid, results_html):
         # The AR can be published only and only if allowed
@@ -731,6 +768,7 @@ class AnalysisRequestPublishView(BrowserView):
             report.edit(
                 AnalysisRequest=ar.UID(),
                 Pdf=pdf_report,
+                CSV=self.csv_data,
                 Html=results_html,
                 Recipients=recipients
             )

@@ -41,8 +41,7 @@ class AnalysisRequestPublishedResults(BikaListingView):
         self.title = self.context.translate(_("Published results"))
         self.description = ""
         self.columns = {
-            'Title': {'title': _('File')},
-            'FileSize': {'title': _('Size')},
+            'Title': {'title': _('Download')},
             'Date': {'title': _('Date')},
             'PublishedBy': {'title': _('Published By')},
             'Recipients': {'title': _('Recipients')},
@@ -52,7 +51,6 @@ class AnalysisRequestPublishedResults(BikaListingView):
              'title': 'All',
              'contentFilter': {},
              'columns': ['Title',
-                         'FileSize',
                          'Date',
                          'PublishedBy',
                          'Recipients']},
@@ -103,21 +101,32 @@ class AnalysisRequestPublishedResults(BikaListingView):
             if 'obj' in items[x]:
                 obj = items[x]['obj']
                 obj_url = obj.absolute_url()
+                # PDF 
                 pdf = obj.getPdf()
                 filesize = 0
-                title = _('Download')
-                anchor = "<a href='%s/at_download/Pdf'>%s</a>" % \
-                         (obj_url, _("Download"))
+                title = _('PDF')
                 try:
                     filesize = pdf.get_size()
-                    filesize = filesize / 1024 if filesize > 0 else 0
+                    filesize = filesize / 1024
+                    anchor = "<a href='%s/at_download/Pdf'>%s (%sKb)</a>" % \
+                         (obj_url, _("PDF"), filesize)
                 except:
                     # POSKeyError: 'No blob file'
                     # Show the record, but not the link
                     title = _('Not available')
                     anchor = title
                 items[x]['Title'] = title
-                items[x]['FileSize'] = '%sKb' % filesize
+
+                # CSV
+                csv = obj.getCSV()
+                csv_anchor = ''
+                filesize = csv.get_size()
+                if filesize:
+                    filesize = filesize / 1024 
+                    csv_anchor = "<a href='%s/at_download/CSV'>%s (%sKb)</a>" % \
+                    (obj_url, _("CSV"), filesize)
+
+                anchor += csv_anchor
                 fmt_date = self.ulocalized_time(obj.created(), long_format=1)
                 items[x]['Date'] = fmt_date
                 items[x]['PublishedBy'] = self.user_fullname(obj.Creator())

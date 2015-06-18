@@ -363,6 +363,7 @@ def createPdf(htmlreport, outfile=None, css=None, images={}):
     # (and currently occupied) zeoclient, hanging it.  All image source
     # URL's referenced in htmlreport should be local files.
     """
+
     # A list of files that should be removed after PDF is written
     cleanup = []
     css_def = ''

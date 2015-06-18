@@ -1,4 +1,4 @@
-""" An AnalysisRequest report, containing the report itself in pdf and html
+""" An AnalysisRequest report, containing the report itself in pdf,csv and html
     format. Also, includes information about the date when was published, from
     who, the report recipients (and their emails) and the publication mode
 """
@@ -20,6 +20,8 @@ schema = BikaSchema.copy() + Schema((
        required=1,
     ),
     BlobField('Pdf',
+    ),
+    StringField('CSV',
     ),
     StringField('Html',
     ),
